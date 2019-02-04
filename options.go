@@ -130,6 +130,16 @@ func AddOption(opt Option, flags *pflag.FlagSet) error {
 	return nil
 }
 
+// AddOptions calls AddOption on a list of Options returning the first error it encounters, or nil if none occurred.
+func AddOptions(opts []Option, flags *pflag.FlagSet) error {
+	for _, o := range opts {
+		if err := AddOption(o, flags); err != nil {
+			return fmt.Errorf("failed to add option: %s", err)
+		}
+	}
+	return nil
+}
+
 // BindOption binds the environment variables and flags to viper. Use this when running the executable, typically at
 // the start of a cobra command.
 func BindOption(opt Option, flags *pflag.FlagSet) error {
@@ -151,5 +161,15 @@ func BindOption(opt Option, flags *pflag.FlagSet) error {
 		}
 	}
 
+	return nil
+}
+
+// BindOptions calls BindOption on a list of Options returning the first error it encounters, or nil if none occurred.
+func BindOptions(opts []Option, flags *pflag.FlagSet) error {
+	for _, o := range opts {
+		if err := BindOption(o, flags); err != nil {
+			return fmt.Errorf("failed to add option: %s", err)
+		}
+	}
 	return nil
 }
