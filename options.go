@@ -83,6 +83,8 @@
 //
 // You can also define your configuration options in a JSON file, to be loaded at runtime.
 //
+// options.json
+//
 //	[
 //	    {
 //	        "name": "address",
@@ -108,6 +110,8 @@
 //	    }
 //	]
 //
+//  Main
+//
 //	func main() {
 //		// error handling omitted for brevity
 //		f, err := os.Open("options.json")
@@ -118,6 +122,8 @@
 //
 //		pflag.Parse()
 //	}
+//
+//  Usage
 //
 //	$ ./popt_json -h
 //	Usage of ./popt_json:
