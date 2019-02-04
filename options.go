@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package popt defines a series of helpers to define options for pflag and viper in one place.
+//
 // Option
 //
 // Use Option to define configuration options for your program. This allows quick and consistent bindings for
@@ -78,6 +80,55 @@
 //	$ echo 'name: "Sunshine"' > hello.yaml
 //	$ ./hello
 //	Hello Sunshine
+//
+// You can also define your configuration options in a JSON file, to be loaded at runtime.
+//
+//	[
+//	    {
+//	        "name": "address",
+//	        "default": "localhost",
+//	        "usage": "The address of the remote host",
+//	        "flag": "address",
+//	        "short": "a",
+//	        "env": "HELLO_ADDRESS"
+//	    },
+//	    {
+//	        "name": "port",
+//	        "default": 8080,
+//	        "usage": "The port of the remote host",
+//	        "flag": "port",
+//	        "short": "p",
+//	        "env": "HELLO_PORT"
+//	    },
+//	    {
+//	        "default": false,
+//	        "usage": "Make the operation more talkative",
+//	        "flag": "verbose",
+//	        "short": "v"
+//	    }
+//	]
+//
+//	func main() {
+//		// error handling omitted for brevity
+//		f, err := os.Open("options.json")
+//		data, err := ioutil.ReadAll(f)
+//		var opts []popt.Option
+//		err = json.Unmarshal(data, &opts)
+//		err = popt.AddAndBindOptions(opts, pflag.CommandLine)
+//
+//		pflag.Parse()
+//	}
+//
+//	$ ./popt_json -h
+//	Usage of ./popt_json:
+//	-a, --address string   The address of the remote host (default "localhost")
+//	-p, --port string      The port of the remote host (default "8080")
+//	-v, --verbose          Make the operation more talkative
+//	pflag: help requested
+//
+// CAVEAT: Beware that your options defined in JSON will follow JSON typing; in particular, all your numbers will be
+// float64s.
+
 package popt
 
 import (
@@ -90,14 +141,14 @@ import (
 
 // Option describes a confifuration option for the program.
 type Option struct {
-	Name    string      // The name of the option. Supports viper nesting using dot '.' in names.
-	Default interface{} // The default value of the option. Mandatory, as the default value is used to infer the option type.
-	Usage   string      // A description of the option.
+	Name    string      `json:"name"`    // The name of the option. Supports viper nesting using dot '.' in names.
+	Default interface{} `json:"default"` // The default value of the option. Mandatory, as the default value is used to infer the option type.
+	Usage   string      `json:"usage"`   // A description of the option.
 
-	Flag  string // The name of the command-line flag.
-	Short string // A shorthand for the flag (optional).
+	Flag  string `json:"flag"`  // The name of the command-line flag.
+	Short string `json:"short"` // A shorthand for the flag (optional).
 
-	Env string // An environment variable to bind this option to (optional).
+	Env string `json:"env"` // An environment variable to bind this option to (optional).
 }
 
 // AddOption adds an option to the program. If opt.Default is set, it sets the default value in viper. If flags is not
