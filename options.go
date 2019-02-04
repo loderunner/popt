@@ -128,7 +128,6 @@
 //
 // CAVEAT: Beware that your options defined in JSON will follow JSON typing; in particular, all your numbers will be
 // float64s.
-
 package popt
 
 import (
