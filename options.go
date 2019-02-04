@@ -110,7 +110,7 @@
 //	    }
 //	]
 //
-//  Main
+// Main
 //
 //	func main() {
 //		// error handling omitted for brevity
@@ -123,7 +123,7 @@
 //		pflag.Parse()
 //	}
 //
-//  Usage
+// Usage
 //
 //	$ ./popt_json -h
 //	Usage of ./popt_json:
