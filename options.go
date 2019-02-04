@@ -20,7 +20,7 @@
 //
 // Start by configuring an option for your program.
 //
-//	var nameOption = util.Option{
+//	var nameOption = popts.Option{
 //		Name:    "name",
 //		Default: "World",
 //		Usage:   "the name of the person you wish to greet",
@@ -33,7 +33,7 @@
 //
 //	func init() {
 //		// Add name option
-//		if err := util.AddOption(nameOption, pflag.CommandLine); err != nil {
+//		if err := popt.AddOption(nameOption, pflag.CommandLine); err != nil {
 //			panic(err)
 //		}
 //	}
@@ -42,7 +42,7 @@
 //
 //	func main() {
 //		// Bind env var and flag to viper
-//		util.BindOption(nameOption, pflag.CommandLine)
+//		popt.BindOption(nameOption, pflag.CommandLine)
 //
 //		// Parse command-line flags
 //		pflag.Parse()
@@ -78,7 +78,7 @@
 //	$ echo 'name: "Sunshine"' > hello.yaml
 //	$ ./hello
 //	Hello Sunshine
-package util
+package popt
 
 import (
 	"fmt"
@@ -169,6 +169,29 @@ func BindOptions(opts []Option, flags *pflag.FlagSet) error {
 	for _, o := range opts {
 		if err := BindOption(o, flags); err != nil {
 			return fmt.Errorf("failed to add option: %s", err)
+		}
+	}
+	return nil
+}
+
+// AddAndBindOption is a helper function that calls AddOption followed by BindOption. Returns an error if either fails.
+// Useful in most cases where there is only one FlagSet.
+func AddAndBindOption(opt Option, flags *pflag.FlagSet) error {
+	if err := AddOption(opt, flags); err != nil {
+		return fmt.Errorf("failed to add option: %s", err)
+	}
+	if err := BindOption(opt, flags); err != nil {
+		return fmt.Errorf("failed to bind option: %s", err)
+	}
+	return nil
+}
+
+// AddAndBindOptions calls AddAndBindOption on a list of Options returning the first error it encounters, or nil if none
+// occurred.
+func AddAndBindOptions(opts []Option, flags *pflag.FlagSet) error {
+	for _, o := range opts {
+		if err := AddAndBindOption(o, flags); err != nil {
+			return err
 		}
 	}
 	return nil
